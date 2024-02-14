@@ -56,7 +56,7 @@ class Tablero {
   }
 
   isFree(fila, columna) {
-    return true ? this.#casillas[fila][columna] === undefined : false;
+    return true ? this.#casillas[fila][columna] === null : false;
   }
 
   setCasilla(fila, columna, valor) {
@@ -159,6 +159,7 @@ class Tablero {
   }
 
   isFull() {
+    debugger;
     return !this.#casillas.some(fila => fila.some(casilla => casilla === null));
   }
 

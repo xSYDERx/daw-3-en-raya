@@ -8,10 +8,13 @@ class Tablero {
   #elementID;
 
   constructor(dimension = 3) {
-    this.#casillas = new Array(dimension);
+    this.#casillas = new Array();
     this.#dimension = dimension;
     for (let i = 0; i <this.#dimension; i++){
-      this.#casillas[i] = new Array(this.#dimension);
+      this.#casillas[i] = new Array();
+      for (let j = 0; j < this.#dimension; j++) {
+        this.#casillas[i][j] = null;
+      }
     }
     this.#turno = 'X';
   }
@@ -86,7 +89,7 @@ class Tablero {
       for (columna = 0; columna < this.#dimension; columna++){
         if (columna !== 0) {
           if (this.getCasilla(fila, columna) === this.getCasilla(fila, columna - 1)) {
-            if (this.getCasilla(fila, columna) !== undefined) {
+            if (this.getCasilla(fila, columna) !== null) {
               seguidas++;
             }
           }
@@ -104,7 +107,7 @@ class Tablero {
       for (fila = 0; fila < this.#dimension; fila++){
         if (fila !== 0) {
           if (this.getCasilla(fila, columna) === this.getCasilla(fila-1, columna)) {
-            if (this.getCasilla(fila, columna) !== undefined) {
+            if (this.getCasilla(fila, columna) !== null) {
               seguidas++;
             }
           }
@@ -119,7 +122,7 @@ class Tablero {
     let seguidas = 0;
     for (let i = 0; i < this.#dimension; i++){
       if (i !== 0) {
-        if ((this.getCasilla(i, i) === this.getCasilla(i - 1, i - 1)) && this.getCasilla(i,i) !== undefined) {
+        if ((this.getCasilla(i, i) === this.getCasilla(i - 1, i - 1)) && this.getCasilla(i,i) !== null) {
           seguidas++;
         }
       }
@@ -147,8 +150,16 @@ class Tablero {
       libres.forEach((casillaLibre) => {
         casillaLibre.dataset.libre = '-';
       });
+    } else {
+      if (this.isFull()) {
+        alert('tablas');
+      }
     }
 
+  }
+
+  isFull() {
+    return !this.#casillas.some(fila => fila.some(casilla => casilla === null));
   }
 
   get dimension() {

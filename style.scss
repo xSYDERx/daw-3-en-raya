@@ -1,0 +1,45 @@
+#tablero {
+  display: grid;
+  margin: 0 auto;
+  margin-top: 20%;
+  grid-gap: 10px;
+  background-color: #fff;
+  color: #444;
+  max-width: 500px;
+  >div {
+    height: 100px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    font-weight: bold;
+    &[data-libre='']:hover{
+      background-color: #444;
+      cursor: pointer;
+    }
+    &[data-libre='X'],&[data-libre='O'],&[data-libre='-']{
+      cursor: not-allowed;
+    }
+  }
+}
+
+
+#dimension.error:focus{
+  border-color: red;
+  outline-color: red;
+}
+
+.preGame{
+  display: block;
+  &.hide{
+    display: none;
+  }
+}
+
+.inGame{
+  display: block;
+  &.hide{
+    display: none;
+  }
+}

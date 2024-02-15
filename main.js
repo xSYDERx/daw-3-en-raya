@@ -53,7 +53,8 @@ buttonCreateTable.addEventListener('click', (e) => {
     return false;
   }
 
-  tablero = new Tablero(parseInt(inputDimensions.value));
+  let checkMachine = document.getElementById('machine');
+  tablero = new Tablero(parseInt(inputDimensions.value),checkMachine.checked);
   tablero.imprimir('tablero');
 
   preGame.classList.toggle('hide');
@@ -72,7 +73,10 @@ for (let button of clearButtons) {
 
 resetButton.addEventListener('click', (e) => {
   document.getElementById(tablero.elementID).innerHTML = '';
+  document.getElementById('marcador').innerHTML = '';
+
   tablero = null;
+
   preGame.classList.toggle('hide');
   inGame.classList.toggle('hide');
   inputDimensions.value = '';

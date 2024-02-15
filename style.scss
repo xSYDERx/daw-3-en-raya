@@ -17,6 +17,7 @@
     &[data-libre='']:hover{
       background-color: #444;
       cursor: pointer;
+      color: white;
     }
     &[data-libre='X'],&[data-libre='O'],&[data-libre='-']{
       cursor: not-allowed;

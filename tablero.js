@@ -8,10 +8,13 @@ class Tablero {
   #turno;     // En esta variable queda guardo a quien le toca, toma valores: X o O
   #elementID;
   #marcador;
+  #versusMachine;
+  #endGame = false;
 
-  constructor(dimension = 3) {
+  constructor(dimension = 3, versusMachine=false) {
     this.#casillas = new Array();
     this.#dimension = dimension;
+    this.#versusMachine = versusMachine;
     for (let i = 0; i <this.#dimension; i++){
       this.#casillas[i] = new Array();
       for (let j = 0; j < this.#dimension; j++) {
@@ -33,7 +36,7 @@ class Tablero {
         casilla.dataset.columna = columna;
         casilla.dataset.libre = '';
         if (this.#casillas[fila][columna]) {
-          casilla.textContent(this.#casillas[fila][columna]);
+          casilla.textContent = this.#casillas[fila][columna];
           casilla.dataset.libre = this.#casillas[fila][columna];
         }
         tablero.appendChild(casilla);
@@ -60,8 +63,20 @@ class Tablero {
   }
 
   toogleTurno() {
+    if (this.#endGame) return false;
+
     if (this.#turno === 'X') {
       this.#turno = 'O';
+      //Comprobamos si jugamos contra la máquina
+      if (this.#versusMachine) {
+        let posicionLibre = this.getCasillaFreeRandom();
+        this.setCasilla(posicionLibre.i, posicionLibre.j, 'O');
+        this.imprimir();
+        this.comprobarResultados()
+        if (this.#endGame) return false;
+        this.toogleTurno();
+      }
+
     } else {
       this.#turno = 'X';
     }
@@ -139,6 +154,7 @@ class Tablero {
     }
 
     if (ganado) {
+      this.#endGame = true;
       Toastify({
         text: `Ha ganado el jugador ${this.#turno}`,
         newWindow: true,
@@ -160,6 +176,7 @@ class Tablero {
       this.#marcador.addPuntos(this.#turno);
       document.querySelector('.clearGame').classList.toggle('show');
     } else {
+      // Si no se ha ganado hay que comprobar si el tablero está petao, si es así son tablas
       if (this.isFull()) {
         Toastify({
           text: `Han sido tablas`,
@@ -173,6 +190,8 @@ class Tablero {
           },
           onClick: function(){} // Callback after click
         }).showToast();
+        document.querySelector('.clearGame').classList.toggle('show');
+        this.#endGame = true;
       }
     }
 
@@ -197,6 +216,18 @@ class Tablero {
         this.toogleTurno();
       }
     });
+
+    casilla.addEventListener('mouseover', (e) => {
+      if (e.currentTarget.dataset.libre === '') {
+        e.currentTarget.textContent = this.#turno;
+      }
+    });
+
+    casilla.addEventListener('mouseleave', (e) => {
+      if (e.currentTarget.dataset.libre === '') {
+        e.currentTarget.textContent = '';
+      }
+    })
   }
 
   get dimension() {
@@ -209,8 +240,21 @@ class Tablero {
 
   limpiar() {
     this.#casillas = this.#casillas.map(casilla => casilla.map(c => null));
+    this.#endGame = false;
     this.imprimir();
     document.querySelector('.clearGame').classList.toggle('show');
+  }
+
+  getCasillaFreeRandom() {
+    let i, j;
+    do {
+      i = Math.floor(Math.random() * (this.#dimension));
+      j = Math.floor(Math.random() * (this.#dimension));
+    } while (!this.isFree(i, j))
+    return {
+      i: i,
+      j: j
+    }
   }
 }
 

@@ -6,7 +6,7 @@ import "toastify-js/src/toastify.css"
 const buttonCreateTable = document.getElementById('createTable');
 const inputDimensions = document.getElementById('dimension');
 const resetButton = document.getElementById('resetGame');
-const clearButton = document.getElementById('clearGame');
+const clearButtons = document.querySelectorAll('.clearGameButton');
 const preGame = document.querySelector('.preGame');
 const inGame = document.querySelector('.inGame');
 
@@ -64,13 +64,11 @@ inputDimensions.addEventListener('keydown', () => {
   inputDimensions.classList.remove('error');
 });
 
-clearButton.addEventListener('click', () => {
-  let actualDimension = tablero.dimension;
-
-  tablero = null;
-  tablero = new Tablero(actualDimension);
-  tablero.imprimir('tablero');
-});
+for (let button of clearButtons) {
+  button.addEventListener('click', () => {
+    tablero.limpiar();
+  });
+}
 
 resetButton.addEventListener('click', (e) => {
   document.getElementById(tablero.elementID).innerHTML = '';

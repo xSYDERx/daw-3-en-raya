@@ -1,11 +1,13 @@
 import Toastify from 'toastify-js'
 import "toastify-js/src/toastify.css"
+import Marcador from './marcador';
 
 class Tablero {
   #casillas;  // Este será el array de arrays donde guardaremos lo que hay en cada posición
   #dimension; // Esta variable determinará el tamaño del tablero
   #turno;     // En esta variable queda guardo a quien le toca, toma valores: X o O
   #elementID;
+  #marcador;
 
   constructor(dimension = 3) {
     this.#casillas = new Array();
@@ -17,9 +19,10 @@ class Tablero {
       }
     }
     this.#turno = 'X';
+    this.#marcador = new Marcador();
   }
 
-  imprimir(elementId) {
+  imprimir(elementId='tablero') {
     let tablero = document.getElementById(elementId);
     this.#elementID = elementId;
     tablero.innerHTML = '';
@@ -34,22 +37,7 @@ class Tablero {
           casilla.dataset.libre = this.#casillas[fila][columna];
         }
         tablero.appendChild(casilla);
-
-        // Y ahora creamos el eventlistener para esa casilla en concreto
-        casilla.addEventListener('click', (e) => {
-          let casillaSeleccionada = e.currentTarget;
-          if (casillaSeleccionada.dataset.libre === '') {
-            casillaSeleccionada.textContent = this.#turno;
-            this.setCasilla(
-              casillaSeleccionada.dataset.fila,
-              casillaSeleccionada.dataset.columna,
-              this.#turno
-            )
-            casillaSeleccionada.dataset.libre = this.#turno;
-            this.comprobarResultados();
-            this.toogleTurno();
-          }
-        });
+        this.addEventClick(casilla);
       }
     }
     tablero.style.gridTemplateColumns = `repeat(${this.#dimension}, 1fr)`;
@@ -119,6 +107,7 @@ class Tablero {
       }
     }
 
+    // Diagonal de izq a derecha
     let seguidas = 0;
     for (let i = 0; i < this.#dimension; i++){
       if (i !== 0) {
@@ -127,8 +116,25 @@ class Tablero {
         }
       }
     }
+
     if (seguidas === this.#dimension - 1) {
-      console.log('Diagonal');
+      console.log('Diagonal de izq a derecha');
+      ganado = true;
+    }
+
+    // Diagonal de izq a derecha
+    seguidas = 0;
+    for (let i = this.#dimension-1; i >= 0; i--){
+      if (i !== this.#dimension - 1) {
+        let j = this.#dimension - 1 - i;
+        if ((this.getCasilla(i, j) === this.getCasilla(i + 1, j - 1)) && this.getCasilla(i,j) !== null) {
+          seguidas++;
+        }
+      }
+    }
+
+    if (seguidas === this.#dimension - 1) {
+      console.log('Diagonal de derecha a izquierda');
       ganado = true;
     }
 
@@ -150,17 +156,47 @@ class Tablero {
       libres.forEach((casillaLibre) => {
         casillaLibre.dataset.libre = '-';
       });
+
+      this.#marcador.addPuntos(this.#turno);
+      document.querySelector('.clearGame').classList.toggle('show');
     } else {
       if (this.isFull()) {
-        alert('tablas');
+        Toastify({
+          text: `Han sido tablas`,
+          newWindow: true,
+          close: true,
+          gravity: "top", // `top` or `bottom`
+          position: "center", // `left`, `center` or `right`
+          stopOnFocus: true, // Prevents dismissing of toast on hover
+          style: {
+            background: "blue",
+          },
+          onClick: function(){} // Callback after click
+        }).showToast();
       }
     }
 
   }
 
   isFull() {
-    debugger;
     return !this.#casillas.some(fila => fila.some(casilla => casilla === null));
+  }
+
+  addEventClick(casilla) {
+    casilla.addEventListener('click', (e) => {
+      let casillaSeleccionada = e.currentTarget;
+      if (casillaSeleccionada.dataset.libre === '') {
+        casillaSeleccionada.textContent = this.#turno;
+        this.setCasilla(
+          casillaSeleccionada.dataset.fila,
+          casillaSeleccionada.dataset.columna,
+          this.#turno
+        )
+        casillaSeleccionada.dataset.libre = this.#turno;
+        this.comprobarResultados();
+        this.toogleTurno();
+      }
+    });
   }
 
   get dimension() {
@@ -169,6 +205,12 @@ class Tablero {
 
   get elementID() {
     return this.#elementID;
+  }
+
+  limpiar() {
+    this.#casillas = this.#casillas.map(casilla => casilla.map(c => null));
+    this.imprimir();
+    document.querySelector('.clearGame').classList.toggle('show');
   }
 }
 

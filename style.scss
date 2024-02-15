@@ -1,7 +1,7 @@
 #tablero {
   display: grid;
   margin: 0 auto;
-  margin-top: 20%;
+  margin-top: 5%;
   grid-gap: 10px;
   background-color: #fff;
   color: #444;
@@ -41,5 +41,14 @@
   display: block;
   &.hide{
     display: none;
+  }
+}
+
+.clearGame {
+  display: none;
+  margin-top: 20px;
+  &.show{
+    display: block;
+    text-align: center;
   }
 }

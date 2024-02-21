@@ -34,6 +34,7 @@ class Marcador {
     marcadorFrontend.innerHTML = '';
     marcadorFrontend.append(ul);
   }
+  
 }
 
 export default Marcador;

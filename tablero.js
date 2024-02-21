@@ -2,6 +2,10 @@ import Toastify from 'toastify-js'
 import "toastify-js/src/toastify.css"
 import Marcador from './marcador';
 import MovimientoLogger from './logs';
+import Main from './main';
+
+let victoriasX = 0;
+let victoriasO = 0;
 
 class Tablero {
   #casillas;  // Este será el array de arrays donde guardaremos lo que hay en cada posición
@@ -180,30 +184,81 @@ class Tablero {
       setTimeout(() => {
         this.movimientoLogger.logFinPartida(this.#turno);  // Retrasa la llamada en 50 ms
       }, 50);
-    } else {
-      // Si no se ha ganado hay que comprobar si el tablero está petao, si es así son tablas
-      if (this.isFull()) {
-        Toastify({
-          text: `Han sido tablas`,
-          newWindow: true,
-          close: true,
-          gravity: "top", // `top` or `bottom`
-          position: "center", // `left`, `center` or `right`
-          stopOnFocus: true, // Prevents dismissing of toast on hover
-          style: {
-            background: "blue",
-          },
-          onClick: function(){} // Callback after click
-        }).showToast();
-        document.querySelector('.clearGame').classList.toggle('show');
-        this.#endGame = true;
-        setTimeout(() => {
-          this.movimientoLogger.logEmpate();
-        }, 50);
+
+      if (this.#turno === 'X') {
+        this.victoriasX++;
+      } else {
+        this.victoriasO++;
+      }
+
+      if (Main.returnRounds() > Main.returnRoundsInput()) {
+        if (this.victoriasX > this.victoriasO) {
+          Toastify({
+            text: "El jugador X ha ganado la partida",
+            duration: 3000,
+            newWindow: false,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+              background: "green",
+            },
+            onClick: function(){} // Callback after click
+          }).showToast();
+        } else if (this.victoriasO > this.victoriasX) {
+          Toastify({
+            text: "El jugador O ha ganado la partida",
+            duration: 3000,
+            newWindow: false,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+              background: "green",
+            },
+            onClick: function(){} // Callback after click
+          }).showToast();
+        } else {
+          Toastify({
+            text: "La partida ha terminado en empate",
+            duration: 3000,
+            newWindow: false,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+              background: "green",
+            },
+            onClick: function(){} // Callback after click
+          }).showToast();
+        }
+      }
+      } else {
+        // Si no se ha ganado hay que comprobar si el tablero está petao, si es así son tablas
+        if (this.isFull()) {
+          Toastify({
+            text: `Han sido tablas`,
+            newWindow: true,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "center", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+              background: "blue",
+            },
+            onClick: function(){} // Callback after click
+          }).showToast();
+          document.querySelector('.clearGame').classList.toggle('show');
+          this.#endGame = true;
+          setTimeout(() => {
+            this.movimientoLogger.logEmpate();
+          }, 50);
+        }
       }
     }
-
-  }
 
   isFull() {
     return !this.#casillas.some(fila => fila.some(casilla => casilla === null));

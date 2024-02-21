@@ -1,6 +1,7 @@
 import Toastify from 'toastify-js'
 import "toastify-js/src/toastify.css"
 import Marcador from './marcador';
+import MovimientoLogger from './logs';
 
 class Tablero {
   #casillas;  // Este será el array de arrays donde guardaremos lo que hay en cada posición
@@ -15,6 +16,7 @@ class Tablero {
     this.#casillas = new Array();
     this.#dimension = dimension;
     this.#versusMachine = versusMachine;
+    this.movimientoLogger = new MovimientoLogger();
     for (let i = 0; i <this.#dimension; i++){
       this.#casillas[i] = new Array();
       for (let j = 0; j < this.#dimension; j++) {
@@ -175,6 +177,9 @@ class Tablero {
 
       this.#marcador.addPuntos(this.#turno);
       document.querySelector('.clearGame').classList.toggle('show');
+      setTimeout(() => {
+        this.movimientoLogger.logFinPartida(this.#turno);  // Retrasa la llamada en 50 ms
+      }, 50);
     } else {
       // Si no se ha ganado hay que comprobar si el tablero está petao, si es así son tablas
       if (this.isFull()) {
@@ -192,6 +197,9 @@ class Tablero {
         }).showToast();
         document.querySelector('.clearGame').classList.toggle('show');
         this.#endGame = true;
+        setTimeout(() => {
+          this.movimientoLogger.logEmpate();
+        }, 50);
       }
     }
 
@@ -210,9 +218,10 @@ class Tablero {
           casillaSeleccionada.dataset.fila,
           casillaSeleccionada.dataset.columna,
           this.#turno
-        )
+        );
         casillaSeleccionada.dataset.libre = this.#turno;
         this.comprobarResultados();
+        this.movimientoLogger.logMovimiento(this.#turno, casillaSeleccionada.dataset.fila, casillaSeleccionada.dataset.columna);
         this.toogleTurno();
       }
     });
@@ -243,6 +252,7 @@ class Tablero {
     this.#endGame = false;
     this.imprimir();
     document.querySelector('.clearGame').classList.toggle('show');
+    this.movimientoLogger.logInicioRonda();
   }
 
   getCasillaFreeRandom() {

@@ -2,15 +2,19 @@ import Tablero from './tablero';
 import './style.scss';
 import Toastify from 'toastify-js'
 import "toastify-js/src/toastify.css"
+import MovimientoLogger from './logs';
 
 const buttonCreateTable = document.getElementById('createTable');
 const inputDimensions = document.getElementById('dimension');
+const inputRounds = document.getElementById('rounds');
 const resetButton = document.getElementById('resetGame');
 const clearButtons = document.querySelectorAll('.clearGameButton');
 const preGame = document.querySelector('.preGame');
 const inGame = document.querySelector('.inGame');
+const logs = document.getElementById('logs');
 
 let tablero;
+const movimientoLogger = new MovimientoLogger(logs.id);
 
 buttonCreateTable.addEventListener('click', (e) => {
   if (!inputDimensions.value) {
@@ -59,6 +63,7 @@ buttonCreateTable.addEventListener('click', (e) => {
 
   preGame.classList.toggle('hide');
   inGame.classList.toggle('hide');
+  movimientoLogger.logInicioRonda();
 });
 
 inputDimensions.addEventListener('keydown', () => {
@@ -74,6 +79,7 @@ for (let button of clearButtons) {
 resetButton.addEventListener('click', (e) => {
   document.getElementById(tablero.elementID).innerHTML = '';
   document.getElementById('marcador').innerHTML = '';
+  logs.innerHTML = '';
 
   tablero = null;
 

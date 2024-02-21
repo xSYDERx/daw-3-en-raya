@@ -31,7 +31,7 @@ class Tablero {
     this.#marcador = new Marcador();
   }
 
-  imprimir(elementId='tablero') {
+  imprimir(elementId = 'tablero') {
     let tablero = document.getElementById(elementId);
     this.#elementID = elementId;
     tablero.innerHTML = '';
@@ -44,6 +44,9 @@ class Tablero {
         if (this.#casillas[fila][columna]) {
           casilla.textContent = this.#casillas[fila][columna];
           casilla.dataset.libre = this.#casillas[fila][columna];
+  
+          // Asigna la clase correspondiente al jugador
+          casilla.classList.add(this.#casillas[fila][columna] === 'X' ? 'x-style' : 'o-style');
         }
         tablero.appendChild(casilla);
         this.addEventClick(casilla);
@@ -51,6 +54,8 @@ class Tablero {
     }
     tablero.style.gridTemplateColumns = `repeat(${this.#dimension}, 1fr)`;
   }
+  
+  
 
   isFree(fila, columna) {
     return true ? this.#casillas[fila][columna] === null : false;
@@ -275,24 +280,30 @@ class Tablero {
           this.#turno
         );
         casillaSeleccionada.dataset.libre = this.#turno;
+  
+        casillaSeleccionada.classList.remove('x-style', 'o-style');
+
+        casillaSeleccionada.classList.add(this.#turno === 'X' ? 'x-style' : 'o-style');
+  
         this.comprobarResultados();
         this.movimientoLogger.logMovimiento(this.#turno, casillaSeleccionada.dataset.fila, casillaSeleccionada.dataset.columna);
         this.toogleTurno();
       }
     });
-
+  
     casilla.addEventListener('mouseover', (e) => {
       if (e.currentTarget.dataset.libre === '') {
         e.currentTarget.textContent = this.#turno;
       }
     });
-
+  
     casilla.addEventListener('mouseleave', (e) => {
       if (e.currentTarget.dataset.libre === '') {
         e.currentTarget.textContent = '';
       }
     })
   }
+  
 
   get dimension() {
     return this.#dimension;

@@ -114,6 +114,7 @@ buttonCreateTable.addEventListener('click', (e) => {
   infoRondaElement.textContent = `Ronda ${rondasJugadas} de ${inputRounds.value}`;
   preGame.classList.toggle('hide');
   inGame.classList.toggle('hide');
+  logs.classList.toggle('hide');
   movimientoLogger.logInicioRonda();
 });
 
@@ -139,6 +140,7 @@ for (let button of clearButtons) {
 
       preGame.classList.toggle('hide');
       inGame.classList.toggle('hide');
+      logs.classList.toggle('hide');
       inputDimensions.value = '';
       inputRounds.value = '';
       }, 2000)
@@ -156,6 +158,7 @@ resetButton.addEventListener('click', (e) => {
   
   preGame.classList.toggle('hide');
   inGame.classList.toggle('hide');
+  logs.classList.toggle('hide');
   inputDimensions.value = '';
   inputRounds.value = '';
 });
